@@ -15,8 +15,8 @@
       <div class="feature col div-choice">
             <div class="scenario-description">Learn how to create tables that can only have one row per partition in a Cassandra NoSQL database.</div>
             <ul>
-              <li><span class="scenario-description-attribute">Difficulty</span>: Beginner</li>
-              <li><span class="scenario-description-attribute">Time</span>: 15 minutes</li>
+              <li><span class="scenario-description-attribute">Difficulty</span>: Intermediate</li>
+              <li><span class="scenario-description-attribute">Time</span>: 20 minutes</li>
             </ul>
             <div class="scenario-objectives">In this hands-on lab, you will:</div>
             <ul>
