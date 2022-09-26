@@ -28,7 +28,8 @@ username *dragonslayer*. Only one registration should succeed.
 
 ✅ Create the table:
 ```
-CREATE TABLE IF NOT EXISTS users (
+DROP TABLE IF EXISTS users;
+CREATE TABLE users (
   username TEXT,
   email TEXT,
   name TEXT,

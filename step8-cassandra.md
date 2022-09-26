@@ -27,7 +27,8 @@ in the previous example. However, to make things even more realistic, we also ke
 
 ✅ Create the table and add the item:
 ```
-CREATE TABLE IF NOT EXISTS bids_by_item (
+DROP TABLE IF EXISTS bids_by_item;
+CREATE TABLE bids_by_item (
   item_id TEXT,
   bid_id TIMEUUID,
   bid DECIMAL,

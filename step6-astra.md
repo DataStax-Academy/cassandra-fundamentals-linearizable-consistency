@@ -32,7 +32,8 @@ attempts to cancel them. The order statuses should change to *cancelled* and *sh
 
 ✅ Create the table and two orders:
 ```
-CREATE TABLE IF NOT EXISTS orders_by_user (
+DROP TABLE IF EXISTS orders_by_user;
+CREATE TABLE orders_by_user (
   username TEXT,
   order_id UUID,
   status TEXT,

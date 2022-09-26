@@ -27,7 +27,8 @@ two users, *dragonslayer* and *delossailor*, bid on the same item.
 
 ✅ Create the table and add the item:
 ```
-CREATE TABLE IF NOT EXISTS auction_items (
+DROP TABLE IF EXISTS auction_items;
+CREATE TABLE auction_items (
   item_id TEXT,
   starting_bid DECIMAL,
   highest_bid DECIMAL,
