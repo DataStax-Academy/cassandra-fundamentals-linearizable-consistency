@@ -22,12 +22,12 @@
       <div class="feature col div-choice">
         <div class="scenario-completed">Lab Completed. Congratulations!</div>
         <br/>
-        <div class="scenario-objectives">In this hands-on lab, you explored:</div>
+        <div class="scenario-objectives">In this hands-on lab, you learned about:</div>
         <ul>
-              <li><span class="scenario-objective">Tables and the CQL <code>CREATE TABLE</code> statement</span></li>
-              <li><span class="scenario-objective">Tables with <i>single-row partitions</i></span></li>
-              <li><span class="scenario-objective"><i>Simple</i> and <i>composite</i> partition keys</span></li>
-              <li><span class="scenario-objective">Useful CQL statements and CQL shell commands that work with tables</span></li>
+              <li><span class="scenario-objective">Lightweight transactions and linearizable consistency</span></li>
+              <li><span class="scenario-objective">CQL statements <code>INSERT</code>, <code>UPDATE</code> and <code>DELETE</code> with <code>IF</code> clauses</span></li>
+              <li><span class="scenario-objective">Several examples of using lightweight transactions</span></li>
+              <li><span class="scenario-objective">When to use lightweight transactions in production</span></li>
         </ul>
         <div class="resources">Learn more about Cassandra on <a href="https://datastax.com/dev" target="_blank">datastax.com/dev</a>:</div>
         <ul>

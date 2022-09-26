@@ -20,10 +20,10 @@
             </ul>
             <div class="scenario-objectives">In this hands-on lab, you will:</div>
             <ul>
-              <li><span class="scenario-objective">Create tables using the CQL <code>CREATE TABLE</code> statement</span></li>
-              <li><span class="scenario-objective">Learn about tables with <i>single-row partitions</i></span></li>
-              <li><span class="scenario-objective">Understand the difference between <i>simple</i> and <i>composite</i> partition keys</span></li>
-              <li><span class="scenario-objective">Practice several useful CQL statements and CQL shell commands that work with tables</span></li>
+              <li><span class="scenario-objective">Understand how lightweight transactions enforce linearizable consistency</span></li>
+              <li><span class="scenario-objective">Use CQL statements <code>INSERT</code>, <code>UPDATE</code> and <code>DELETE</code> with <code>IF</code> clauses</span></li>
+              <li><span class="scenario-objective">Explore several examples of using lightweight transactions</span></li>
+              <li><span class="scenario-objective">Learn when to use lightweight transactions in production</span></li>
             </ul>
       </div>
      </div>
