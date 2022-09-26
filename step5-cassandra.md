@@ -20,48 +20,40 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Create table "movies"</div>
+<div class="step-title">Resetting user passwords</div>
 
-Our second table will store information about movies as shown below.  To define 
-this table with *single-row partitions*, we can use `title` and `year`
-as a *composite partition key*.
+In our second example, we use lightweight transactions to reset a user password. This scenario 
+assumes that the user with username *dragonslayer* requests to reset his password. Our application generates 
+a random reset token that expires in 1 hour or 3600 seconds and can be used only once. A subsequent attempt to use 
+the same token should fail.  
 
-| title               | year | duration | avg_rating |
-|---------------------|------|----------|------------|
-| Alice in Wonderland | 2010 |   108    |    6.00    |
-| Alice in Wonderland | 1951 |    75    |    7.08    |
-
-<br/>
-
-✅ Create the table:
+✅ Generate a password reset token: 
 ```
-CREATE TABLE IF NOT EXISTS movies (
-  title TEXT,
-  year INT,
-  duration INT,
-  avg_rating FLOAT,
-  PRIMARY KEY ((title, year))
-);
+UPDATE users USING TTL 3600
+SET reset_token = 6ef95fd0-9ae0-11ea-a9d2-d777ab7dec9e 
+WHERE username = 'dragonslayer';
+
+SELECT * FROM users
+WHERE username = 'dragonslayer';
 ```
 
-✅ Insert the rows:
+✅ Update the password: 
 ```
-INSERT INTO movies (title, year, duration, avg_rating) 
-VALUES ('Alice in Wonderland', 2010, 108, 6.00);
-INSERT INTO movies (title, year, duration, avg_rating) 
-VALUES ('Alice in Wonderland', 1951, 75, 7.08);
+UPDATE users 
+SET reset_token = null, password = 'encrypted password'
+WHERE username = 'dragonslayer'
+IF reset_token = 6ef95fd0-9ae0-11ea-a9d2-d777ab7dec9e;
+
+UPDATE users 
+SET reset_token = null, password = 'malicious password'
+WHERE username = 'dragonslayer'
+IF reset_token = 6ef95fd0-9ae0-11ea-a9d2-d777ab7dec9e;
 ```
 
-✅ Retrieve one row:
+✅ Retrieve the user information:
 ```
-SELECT * FROM movies
-WHERE title = 'Alice in Wonderland'
-  AND year = 2010;
-```
-
-✅ Retrieve all rows:
-```
-SELECT * FROM movies;
+SELECT * FROM users
+WHERE username = 'dragonslayer';
 ```
 
 <!-- NAVIGATION -->

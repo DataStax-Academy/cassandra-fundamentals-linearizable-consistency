@@ -34,7 +34,7 @@ cqlsh
 
 ✅ Create the keyspace:
 ```
-CREATE KEYSPACE IF NOT EXISTS ks_single_row_partitions
+CREATE KEYSPACE ks_linearizable_consistency
 WITH replication = {
   'class': 'NetworkTopologyStrategy', 
   'DC-Houston': 1 };
@@ -42,7 +42,7 @@ WITH replication = {
 
 ✅ Set the current working keyspace:
 ```
-USE ks_single_row_partitions;
+USE ks_linearizable_consistency;
 ```
 
 <!-- NAVIGATION -->

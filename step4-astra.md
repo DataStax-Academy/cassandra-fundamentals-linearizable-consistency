@@ -20,47 +20,38 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Create table "users"</div>
+<div class="step-title">Registering new users</div>
 
-Our first table will store information about users as shown below. To define 
-this table with *single-row partitions*, we can use `email`
-as a *simple partition key*.
-
-| email            | name | age | date_joined |
-|------------------|------|-----|-------------|
-| joe@datastax.com |  Joe |  25 |  2020-01-01 |
-| jen@datastax.com |  Jen |  27 |  2020-01-01 | 
-
-<br/>
+In our first example, we use lightweight transactions to register new users. This scenario 
+demonstrates how two people, *Joe* and *Jen*, try to register new accounts using the same 
+username *dragonslayer*. Only one registration should succeed.
 
 ✅ Create the table:
 ```
 CREATE TABLE IF NOT EXISTS users (
+  username TEXT,
   email TEXT,
   name TEXT,
-  age INT,
-  date_joined DATE,
-  PRIMARY KEY ((email))
+  password TEXT,
+  reset_token UUID,
+  PRIMARY KEY ((username))
 );
 ```
 
-✅ Insert the rows:
+✅ Register the users: 
 ```
-INSERT INTO users (email, name, age, date_joined) 
-VALUES ('joe@datastax.com', 'Joe', 25, '2020-01-01');
-INSERT INTO users (email, name, age, date_joined) 
-VALUES ('jen@datastax.com', 'Jen', 27, '2020-01-01');
+INSERT INTO users (username, email, name) 
+VALUES ('dragonslayer', 'joe@datastax.com', 'Joe')
+IF NOT EXISTS;
+INSERT INTO users (username, email, name) 
+VALUES ('dragonslayer', 'jen@datastax.com', 'Jen')
+IF NOT EXISTS;
 ```
 
-✅ Retrieve one row:
+✅ Retrieve the new account:
 ```
 SELECT * FROM users
-WHERE email = 'joe@datastax.com';
-```
-
-✅ Retrieve all rows:
-```
-SELECT * FROM users;
+WHERE username = 'dragonslayer';
 ```
 
 <!-- NAVIGATION -->

@@ -20,37 +20,26 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Creating tables</div>
+<div class="step-title">Lightweight transactions</div>
 
-To create a table, Cassandra Query Language has the `CREATE TABLE` statement with the following simplified syntax:
+In Cassandra, linearizable consistency is supported by *lightweight transactions* (LWTs). 
+They have the same syntax as CQL statements `INSERT`, `UPDATE` and `DELETE` with 
+additional `IF` clauses:
 
 <pre class="non-executable-code">
-CREATE TABLE [ IF NOT EXISTS ] [keyspace_name.]table_name
-( 
-  column_name data_type [ , ... ] 
-  PRIMARY KEY ( 
-   ( partition_key_column_name  [ , ... ] )
-   [ clustering_key_column_name [ , ... ] ]
-  )     
-)
-[ WITH CLUSTERING ORDER BY 
-   ( clustering_key_column_name ASC|DESC [ , ... ] )
-];
+INSERT INTO ... VALUES ...
+IF NOT EXISTS;
+
+UPDATE ... SET ... WHERE ...
+IF EXISTS | IF predicate [ AND ... ];
+
+DELETE ... FROM ... WHERE ...
+IF EXISTS | IF predicate [ AND ... ];
 </pre>
 
-First, notice that a table is created within an existing keyspace. If a *keyspace name* is omitted, the current working keyspace is used.
-
-Second, *keyspace*, *table* and *column* *names* can contain alphanumeric characters and underscores. By default, 
-names are case-insensitive, but case sensitivity can be forced by using double quotation marks around a name.
-
-Third, there are many CQL *data types*, including native, collection and user-defined data types. For now, we will use some of the simplest and self-descriptive ones like `TEXT`, `INT`, `FLOAT`, and `DATE`.
-
-Fourth, notice that there are additional 
-parentheses around the partition key columns that can be omitted when the partition key has only one column (a.k.a. 
-*simple partition key*) and are required when the partition key has more than one column (a.k.a. 
-*composite partition key*). 
-
-Finally, when a clustering key is defined, ordering is optionally specified in the last clause with ascendant order being the default. 
+The `IF` clauses specify conditions that must be satisfied for inserts, updates and deletes 
+to succeed. Thus, lightweight transactions are also sometimes referred to as *compare-and-set operations*. 
+Each lightweight transaction is atomic and always works on a single partition. 
 
 <!-- NAVIGATION -->
 <div id="navigation-bottom" class="navigation-bottom">

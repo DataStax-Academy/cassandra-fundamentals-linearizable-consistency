@@ -41,22 +41,22 @@ astra setup
 astra db list
 ```
 
-✅ Create database `cassandra-fundamentals` and keyspace `ks_single_row_partitions` if they do not exist:
+✅ Create database `cassandra-fundamentals` and keyspace `ks_linearizable_consistency` if they do not exist:
 ```
-astra db create cassandra-fundamentals -k ks_single_row_partitions --if-not-exist --wait
+astra db create cassandra-fundamentals -k ks_linearizable_consistency --if-not-exist --wait
 ```
 
 This operation may take a bit longer when creating a new database or resuming an existing hibernated database.
 
-✅ Verify that database `cassandra-fundamentals` is `ACTIVE` and keyspace `ks_single_row_partitions` exists:
+✅ Verify that database `cassandra-fundamentals` is `ACTIVE` and keyspace `ks_linearizable_consistency` exists:
 ```
 astra db get cassandra-fundamentals
 ```
 
-✅ Start the CQL shell and connect to database `cassandra-fundamentals` and keyspace `ks_single_row_partitions`:
+✅ Start the CQL shell and connect to database `cassandra-fundamentals` and keyspace `ks_linearizable_consistency`:
 ```
 clear
-astra db cqlsh cassandra-fundamentals -k ks_single_row_partitions
+astra db cqlsh cassandra-fundamentals -k ks_linearizable_consistency
 ```
 
 <!-- NAVIGATION -->

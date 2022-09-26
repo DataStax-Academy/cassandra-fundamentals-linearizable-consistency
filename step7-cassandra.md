@@ -20,70 +20,68 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Create table "actors"</div>
+<div class="step-title">Bidding on auction items</div>
 
-Our last table will store information about movie actors as shown below. This table 
-with *single-row partitions* and a *composite partition key* is for you to define.
+Our fourth example deals with transactions that place bids on auction items. This scenario demonstrates how 
+two users, *dragonslayer* and *delossailor*, bid on the same item.
 
-| first_name | last_name  | dob        |
-|----------- |------------|------------|
-| Johnny     | Depp       | 1963-06-09 |
-| Anne       | Hathaway   | 1982-11-12 | 
-
-<br/>
-
-✅ Create the table:
-<details>
-  <summary>Solution</summary>
-
+✅ Create the table and add the item:
 ```
-CREATE TABLE IF NOT EXISTS actors (
-  first_name TEXT,
-  last_name TEXT,
-  dob DATE,
-  PRIMARY KEY ((first_name, last_name))
+CREATE TABLE IF NOT EXISTS auction_items (
+  item_id TEXT,
+  starting_bid DECIMAL,
+  highest_bid DECIMAL,
+  highest_bidder TEXT,
+  PRIMARY KEY ((item_id))
 );
+
+INSERT INTO auction_items (item_id, starting_bid, highest_bid) 
+VALUES ('ABC123', 10.00, 0.00);
+SELECT * FROM auction_items WHERE item_id = 'ABC123';
+```
+
+✅ User *dragonslayer* bids $10.00: 
+<details>
+  <summary>Solution</summary>
+
+```
+UPDATE auction_items 
+SET highest_bid = 10.00, highest_bidder = 'dragonslayer' 
+WHERE item_id = 'ABC123'
+IF starting_bid <= 10.00 AND highest_bid < 10.00;
+SELECT * FROM auction_items WHERE item_id = 'ABC123';
 ```
 
 </details>
 
 <br/>
 
-✅ Insert the rows:
+✅ User *delossailor* bids $10.00: 
 <details>
   <summary>Solution</summary>
 
 ```
-INSERT INTO actors (first_name, last_name, dob) 
-VALUES ('Johnny', 'Depp', '1963-06-09');
-INSERT INTO actors (first_name, last_name, dob) 
-VALUES ('Anne', 'Hathaway', '1982-11-12');
+UPDATE auction_items 
+SET highest_bid = 10.00, highest_bidder = 'delossailor' 
+WHERE item_id = 'ABC123'
+IF starting_bid <= 10.00 AND highest_bid < 10.00;
+SELECT * FROM auction_items WHERE item_id = 'ABC123';
 ```
 
 </details>
 
 <br/>
 
-✅ Retrieve one row:
+✅ User *delossailor* bids $10.99: 
 <details>
   <summary>Solution</summary>
 
 ```
-SELECT * FROM actors
-WHERE first_name = 'Johnny'
-  AND last_name = 'Depp';
-```
-
-</details>
-
-<br/>
-
-✅ Retrieve all rows:
-<details>
-  <summary>Solution</summary>
-
-```
-SELECT * FROM actors;
+UPDATE auction_items 
+SET highest_bid = 10.99, highest_bidder = 'delossailor' 
+WHERE item_id = 'ABC123'
+IF starting_bid <= 10.99 AND highest_bid < 10.99;
+SELECT * FROM auction_items WHERE item_id = 'ABC123';
 ```
 
 </details>

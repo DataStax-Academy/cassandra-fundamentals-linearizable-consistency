@@ -20,46 +20,76 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">What tables with single-row partitions are good for?</div>
+<div class="step-title">Keeping the bidding history</div>
 
-In Cassandra, tables are designed to support specific queries. Tables with 
-single-row partitions are generally used to store and retrieve entities 
-by their unique identifiers, such as retrieving a *user by email* or *movie by title and year*.
+Our final and a bit more advanced example deals with transactions that place bids on auction items just like 
+in the previous example. However, to make things even more realistic, we also keep the history of all placed bids, whether they were successful or not. 
 
-Of course, it is possible to use tables with 
-single-row partitions for relationships, such as *user rated movie* in the example below, but tables 
-with multi-row partitions are much more suitable for that. 
- 
+✅ Create the table and add the item:
 ```
--- Not a good way to 
--- store relationships ... 
-CREATE TABLE IF NOT EXISTS user_rated_movie (
-  email TEXT,
-  title TEXT,
-  year INT,
-  rating INT,
-  PRIMARY KEY ((email, title, year))
-);
+CREATE TABLE IF NOT EXISTS bids_by_item (
+  item_id TEXT,
+  bid_id TIMEUUID,
+  bid DECIMAL,
+  bidder TEXT,
+  starting_bid DECIMAL STATIC,
+  highest_bid DECIMAL STATIC,
+  highest_bidder TEXT STATIC,
+  PRIMARY KEY ((item_id), bid_id)
+) WITH CLUSTERING ORDER BY (bid_id DESC);
 
--- Tables with multi-row partitions 
--- are the way to go ...
--- Get all rating left by a user
-CREATE TABLE IF NOT EXISTS ratings_by_user (
-  email TEXT,
-  title TEXT,
-  year INT,
-  rating INT,
-  PRIMARY KEY ((email), title, year)
-);
---  Get all ratings left for a movie
-CREATE TABLE IF NOT EXISTS ratings_by_movie (
-  email TEXT,
-  title TEXT,
-  year INT,
-  rating INT,
-  PRIMARY KEY ((title, year), email)
-);
+INSERT INTO bids_by_item (item_id, bid_id, starting_bid, highest_bid) 
+VALUES ('ABC123', NOW(), 10.00, 0.00);
+SELECT * FROM bids_by_item WHERE item_id = 'ABC123';
 ```
+
+✅ User *dragonslayer* bids $10.00: 
+```
+INSERT INTO bids_by_item (item_id, bid_id, bid, bidder) 
+VALUES ('ABC123', NOW(), 10.00, 'dragonslayer');
+
+UPDATE bids_by_item 
+SET highest_bid = 10.00, highest_bidder = 'dragonslayer' 
+WHERE item_id = 'ABC123'
+IF starting_bid <= 10.00 AND highest_bid < 10.00;
+SELECT * FROM bids_by_item WHERE item_id = 'ABC123';
+```
+
+✅ User *delossailor* bids $10.00: 
+<details>
+  <summary>Solution</summary>
+
+```
+INSERT INTO bids_by_item (item_id, bid_id, bid, bidder) 
+VALUES ('ABC123', NOW(), 10.00, 'delossailor');
+
+UPDATE bids_by_item 
+SET highest_bid = 10.00, highest_bidder = 'delossailor' 
+WHERE item_id = 'ABC123'
+IF starting_bid <= 10.00 AND highest_bid < 10.00;
+SELECT * FROM bids_by_item WHERE item_id = 'ABC123';
+```
+
+</details>
+
+<br/>
+
+✅ User *delossailor* bids $10.99: 
+<details>
+  <summary>Solution</summary>
+
+```
+INSERT INTO bids_by_item (item_id, bid_id, bid, bidder) 
+VALUES ('ABC123', NOW(), 10.99, 'delossailor');
+
+UPDATE bids_by_item 
+SET highest_bid = 10.99, highest_bidder = 'delossailor' 
+WHERE item_id = 'ABC123'
+IF starting_bid <= 10.99 AND highest_bid < 10.99;
+SELECT * FROM bids_by_item WHERE item_id = 'ABC123';
+```
+
+</details>
 
 <!-- NAVIGATION -->
 <div id="navigation-bottom" class="navigation-bottom">

@@ -20,20 +20,45 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Tables, columns, data types, rows, partitions, keys, ordering</div>
+<div class="step-title">Linearizable consistency</div>
 
-A *table* in Apache Cassandra shares many similarities with a table in a relational database. It has named *columns* with *data types* and *rows* with *values*. A *primary key* uniquely identifies a row in a table. 
+While *eventual consistency* is completely adequate for most real-life use cases 
+and *tunable consistency* helps to customize consistency guarantees for specific application needs,
+there are situations when this is still not enough. Even *strong consistency*, which guarantees that 
+all acknowledged writes are visible to subsequent reads, does not help with *race conditions* 
+when there are multiple transactions trying to read and write the same piece of data concurrently. Examples 
+of race conditions include two users trying to register new accounts using the same username, or multiple 
+auction participants placing bids on the same item and potentially overwriting each other's bids. The latter 
+scenario is demonstrated in the following illustration:
 
-There are also important differences. In Cassandra, on one hand, a table is a set of *rows* containing values and, on the other hand,
-a table is also a set of *partitions* containing rows. Specifically, each row belongs to exactly one partition and each partition contains one or more rows. A *primary key* consists of a mandatory *partition key* and optional *clustering key*, where
-a partition key uniquely identifies a partition in a table and a clustering key uniquely identifies a row in a partition.
+<pre class="non-executable-code">
+User 1: read(10)   10<20   write(20)
+--------------------------------------------> time
+User 2:         read(10)   10<15   write(15)
 
-A table with *single-row partitions* is a table where there is exactly one row per partition. A table 
-with single-row partitions defines a primary key to be equivalent to a partition key.  
+</pre> 
 
-A table with *multi-row partitions* is a table where there can be one or more rows per partition. A table 
-with multi-row partitions defines a primary key to be a combination of both partition and clustering keys. Rows in the 
-same partition have the same partition key values and are *ordered* based on their clustering key values using the default ascendant order.
+Both users run their transactions concurrently. Both read the current highest bid of `10` and both check that 
+their new desired bids of `20` and `15` are higher than `10`. While the first user writes her bid of `20`, the unsuspecting second 
+user writes her bid of `15`. The resulting highest bid value is `15` instead of `20`, which is incorrect.
+
+The solution to this and other problems that involve race conditions is *linearizable consistency*, which ensures that
+concurrent transactions produce the same result as if they execute in a sequence, one after another. For the 
+previous example, linearizable consistency would result in the correct highest bid of `20`, as shown in these two possible 
+execution sequences:
+
+
+<pre class="non-executable-code">
+read(10) 10<20 write(20)
+--------------------------------------------> time
+                    read(20) 20>15  
+</pre>
+<pre class="non-executable-code">
+                    read(15) 15<20 write(20)
+--------------------------------------------> time
+read(10) 10<15 write(15)
+
+</pre>
 
 <!-- NAVIGATION -->
 <div id="navigation-bottom" class="navigation-bottom">

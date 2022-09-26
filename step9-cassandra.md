@@ -20,34 +20,21 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Working with tables</div>
+<div class="step-title">Lightweight transaction limitations</div>
 
-Try the following CQL shell commands and CQL statements that are applicable to tables. 
+In terms of performance, lightweight transactions can be *several times slower* than regular inserts, updates and deletes, 
+which is the consequence of using the *Paxos* consensus protocol for the internal implementation. Therefore, 
+you should only use lightweight transactions when it is absolutely necessary. 
 
-✅ List the names of all tables in the current keyspace:
-```
-DESCRIBE TABLES;
-```
+You should be able to recognize potential *race conditions* and estimate *data contention*. 
+In case of low data contention, when only a few transactions compete for access to the same data, 
+using lightweight transactions to enforce linearizable consistency is a good choice. However, in case of high data contention, 
+when many concurrent transactions compete for access to the same data, you may be better off 
+changing your data model to reduce data contention or organize transactions into a time-ordered queue to ensure serial execution.
 
-✅ Output all CQL statements that can be used to recreate the given table:
-```
-DESCRIBE TABLE movies;
-```
-
-✅ Alter the given table:
-```
-ALTER TABLE movies ADD country TEXT;
-```
-
-✅ Delete all rows from the table:
-```
-TRUNCATE movies;
-```
-
-✅ Remove the given table:
-```
-DROP TABLE movies;
-```
+With respect to our previous examples, registering new users,
+resetting user passwords, and shipping and cancelling orders clearly fall into the low data contention category.
+The example of bidding on auction items can potentially have high data contention.
 
 <!-- NAVIGATION -->
 <div id="navigation-bottom" class="navigation-bottom">
