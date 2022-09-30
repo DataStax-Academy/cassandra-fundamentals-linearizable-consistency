@@ -34,7 +34,7 @@ cqlsh
 
 ✅ Create the keyspace:
 ```
-CREATE KEYSPACE ks_linearizable_consistency
+CREATE KEYSPACE IF NOT EXISTS ks_linearizable_consistency
 WITH replication = {
   'class': 'NetworkTopologyStrategy', 
   'DC-Houston': 1 };
